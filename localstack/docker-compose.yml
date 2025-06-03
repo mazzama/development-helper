@@ -1,0 +1,14 @@
+version: "2.1"
+services:
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+    environment:
+      - SERVICES=s3,sqs,lambda,dynamodb
+      - LOCALSTACK_HOSTNAME=localhost
+      - DATA_DIR=/var/lib/localstack/data
+    volumes:
+      - "./data/localstack:/var/lib/localstack"
