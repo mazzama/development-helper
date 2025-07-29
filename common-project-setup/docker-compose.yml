@@ -9,6 +9,20 @@ services:
       POSTGRES_DB: myapp
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "-c log_statement=all -c log_min_duration_statement=0 -c log_line_prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '"
+    command: |
+      postgres
+      -c log_statement=all
+      -c log_min_duration_statement=0
+      -c log_line_prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
+      -c log_destination=stderr
+      -c logging_collector=off
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=postgres"
     ports:
       - "5432:5432"
     volumes:
@@ -176,6 +190,23 @@ services:
     restart: unless-stopped
     depends_on:
       - redis
+
+  # Promtail - Log Collection Agent
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - monitoring
+    restart: unless-stopped
+    depends_on:
+      - loki
+      - tempo
+      - mimir
 
 volumes:
   # Application Data Volumes
