@@ -9,7 +9,6 @@ services:
       POSTGRES_DB: myapp
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_INITDB_ARGS: "-c log_statement=all -c log_min_duration_statement=0 -c log_line_prefix='%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '"
     command: |
       postgres
       -c log_statement=all
