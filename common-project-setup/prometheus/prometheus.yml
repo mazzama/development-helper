@@ -63,6 +63,20 @@ scrape_configs:
       - targets: ['mimir:9009']
     scrape_interval: 30s
     metrics_path: /metrics
+  - job_name: 'kafka-exporter'
+    static_configs:
+      - targets: ['kafka-exporter:9308']
+    scrape_interval: 30s
+    metrics_path: /metrics
+  - job_name: 'go-mini-custody-bff'
+    static_configs:
+      - targets: ['host.docker.internal:9091']
+    scrape_interval: 15s
+    metrics_path: /metrics
+    scrape_timeout: 10s
+    honor_labels: false
+    params:
+      format: ['prometheus']
 
 # Remote write to Mimir
 remote_write:
